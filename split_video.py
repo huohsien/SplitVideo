@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 
 def main():
     parser = argparse.ArgumentParser(description='Trim a Video at the given time hh:mm:ss')
@@ -14,6 +15,9 @@ def main():
     args = parser.parse_args()
     if args.ss is None:
         args.ss = "0:0:0"
+    ESCAPE_SPACE = re.compile("\\\\")
+    args.src = ESCAPE_SPACE.sub("", args.src)
+    args.dst = ESCAPE_SPACE.sub("", args.dst)
     cmd_str = "time ffmpeg -i \"{}\" -vcodec copy -acodec copy -ss {} -to {} \"{}\"" \
         .format(args.src, args.ss, args.to, args.dst)
     os.system(cmd_str)
